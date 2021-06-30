@@ -56,6 +56,31 @@ pipeline {
 				sh "mvn failsafe:integration-test failsafe:verify"
 			}
 		}
+
+				stage('Package') {
+			steps {
+				sh "mvn package -DskipTests"
+			}
+		}
+		stage('Build Docker Image') {
+			steps {
+				// docker build -t chilledout/jenkins-ci-cd:$env:BUILD_TAG
+				script{
+					dockerimage=docker.build("chilledout/jenkins-ci-cd:${env:BUILD_TAG}")
+				}
+			}
+		}
+
+		stage('Push Docker Image') {
+			steps {
+				script {
+					docker.withRegistry("","dockerhub"){
+						dockerimage.Push();
+						dockerimage.Push('latest')
+					}
+				}
+			}
+		}
 	}
 	post {
 		always {
