@@ -76,7 +76,7 @@ pipeline {
 				script {
 					docker.withRegistry("","dockerhub"){
 						dockerimage.Push();
-						dockerimage.Push('latest')
+						dockerimage.Push('latest');
 					}
 				}
 			}
